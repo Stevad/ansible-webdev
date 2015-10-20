@@ -1,0 +1,19 @@
+---
+- hosts: all
+  sudo: true
+  vars_files:
+    - vars/all.yml
+  roles:
+    - server
+    - vagrant_local
+    - nginx
+    - mysql
+    - pgsql
+    - mongodb
+    - redis
+    - php
+    - xdebug
+    - xhprof
+    - composer
+    - adminer
+    - app

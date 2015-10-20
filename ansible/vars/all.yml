@@ -1,0 +1,69 @@
+---
+server:
+    packages: [vim, htop, iotop, mc, git]
+    timezone: UTC
+    locale: en_US.UTF-8
+vagrant_local:
+    vm: {
+      base_box: trusty64,
+      hostname: webdev.local,
+      ip: 192.168.56.101,
+      memory: '1024',
+      sharedfolder: ./,
+      syncType: '0'
+    }
+nginx:
+    docroot: /var/www/html
+    servername: webdev.local
+    vhosts: [
+    ]
+mysql:
+    root_password: root
+    database: dbname
+    user: dbuser
+    password: dbuser
+    dump: ''
+pgsql:
+    version: 9.4
+    database: dbname
+    user: dbuser
+    password: dbuser
+    dump: ''
+mongodb:
+    install: '1'
+redis:
+    port: '6379'
+php:
+    ppa: php5-5.6
+    packages: [php5-cli, php5-json, php5-mcrypt, php5-intl, php5-curl, php5-imagick, php5-gd, php5-mysql, php5-pgsql, php5-mongo, php-pear]
+    options: {
+      display_errors: On,
+      display_startup_errors: On,
+      error_reporting: E_ALL,
+      track_errors: On,
+      html_errors: On,
+      file_uploads: On,
+      upload_max_filesize: 128M,
+      post_max_size: 128M,
+      max_file_uploads: 20
+    }
+xdebug:
+    settings: {
+      xdebug.default_enable: 1,
+      xdebug.remote_autostart: 0,
+      xdebug.remote_connect_back: 1,
+      xdebug.remote_enable: 1,
+      xdebug.remote_handler: dbgp,
+      xdebug.remote_port: 9000,
+      xdebug.var_display_max_depth: 15
+    }
+xhprof:
+    pecl_package: xhprof-beta
+    ui_git_repo: https://github.com/phacility/xhprof.git
+    ui_git_branch: master
+    ui_doc_root: /var/www/html/xhprof
+composer:
+    install: '1'
+adminer:
+    install_path: /var/www/html/adminer
+    download_url: http://www.adminer.org/latest.php

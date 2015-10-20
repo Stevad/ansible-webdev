@@ -1,0 +1,25 @@
+---
+- name: Install packages
+  sudo: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - php5-dev
+    - graphviz
+
+- name: Install PECL package
+  shell: echo "\n\n\n\n\n\n\n\n\n" | pecl install {{ xhprof.pecl_package }}
+  register: pecl_result
+  changed_when: "'already installed' not in pecl_result.stdout"
+  failed_when: "pecl_result.stderr or ('ERROR' in pecl_result.stdout)"
+
+- name: Install extension INI file
+  copy: src=xhprof.ini dest=/etc/php5/mods-available/xhprof.ini
+
+- name: Enable extension
+  shell: php5enmod xhprof
+  notify: restart php5-fpm
+
+- name: Get XHProf UI from git repo
+  git: repo={{ xhprof.ui_git_repo }}
+       dest={{ xhprof.ui_doc_root }}
+       version={{ xhprof.ui_git_branch }}

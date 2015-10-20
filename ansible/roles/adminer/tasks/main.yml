@@ -1,0 +1,8 @@
+---
+- name: Ensure target directory exists
+  file: path={{ adminer.install_path }} state=directory owner=vagrant group=www-data
+
+- name: Download and install
+  get_url: >
+    url={{ adminer.download_url }}
+    dest={{ adminer.install_path }}/index.php

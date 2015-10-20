@@ -1,0 +1,29 @@
+---
+- name: Install Nginx
+  sudo: yes
+  apt: pkg=nginx state=latest
+
+- name: Change default nginx site
+  sudo: yes
+  template: src=default.tpl dest=/etc/nginx/sites-available/default
+  notify: restart nginx
+
+- name: Add nginx virtual hosts
+  sudo: yes
+  template: >
+    src="vhost.tpl"
+    dest="/etc/nginx/sites-available/{{ item.servername }}.conf"
+    owner="root"
+    group="root"
+    mode=0644
+  with_items: nginx.vhosts
+  when: nginx.vhosts is defined
+
+- name: Enable virtual hosts
+  file: src=/etc/nginx/sites-available/{{ item.servername }}.conf dest=/etc/nginx/sites-enabled/{{ item.servername }}.conf state=link
+  with_items: nginx.vhosts
+  when: nginx.vhosts is defined
+  notify: restart nginx
+
+- name: Set permissions to /var/www
+  file: path=/var/www state=directory owner=vagrant group=www-data

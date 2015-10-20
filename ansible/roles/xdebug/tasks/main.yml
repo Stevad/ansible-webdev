@@ -1,0 +1,11 @@
+---
+- name: Install packages
+  sudo: yes
+  apt: pkg=php5-xdebug state=latest
+
+- name: Set options from config
+  lineinfile: dest=/etc/php5/mods-available/xdebug.ini
+              regexp='{{ item.key }}\s?=\s?\w'
+              line='{{ item.key }} = {{ item.value }}'
+  with_dict: xdebug.settings
+  when: xdebug.settings is defined
