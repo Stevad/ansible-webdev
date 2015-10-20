@@ -11,14 +11,9 @@
     - mysql-client
     - python-mysqldb
 
+# set all+grant privileges for root
 - name: Update root password for all root accounts
-  mysql_user: name=root host={{ item }} check_implicit_admin=yes password={{ mysql.root_password }} login_user=root login_password={{ mysql.root_password }}
-  with_items:
-    - "{{ current_hostname.stdout | lower }}"
-    - 127.0.0.1
-    - ::1
-    - localhost
-    - '%'
+  mysql_user: name=root host='%' check_implicit_admin=yes password={{ mysql.root_password }} login_user=root login_password={{ mysql.root_password }} priv=*.*:ALL,GRANT
 
 - name: Create databases
   mysql_db: name={{ mysql.database }} state=present login_user=root login_password={{ mysql.root_password }}
@@ -34,16 +29,11 @@
     - "{{ current_hostname.stdout | lower }}"
 
 - name: Create users
-  mysql_user: name={{ mysql.user }} password={{ mysql.password }} priv={{ mysql.database }}.*:ALL state=present login_user=root login_password={{ mysql.root_password }}
+  mysql_user: name={{ mysql.user }} password={{ mysql.password }} state=present login_user=root login_password={{ mysql.root_password }}
 
+# set all privileges to specified user
 - name: Update user password for all accounts
-  mysql_user: name={{ mysql.user }} host={{ item }} password={{ mysql.password }} login_user=root login_password={{ mysql.root_password }}
-  with_items:
-    - "{{ current_hostname.stdout | lower }}"
-    - 127.0.0.1
-    - ::1
-    - localhost
-    - '%'
+  mysql_user: name={{ mysql.user }} host='%' password={{ mysql.password }} login_user=root login_password={{ mysql.root_password }} priv=*.*:ALL
 
 - name: Ensure target config directory exists
   file: path=/etc/mysql/conf.d state=directory
